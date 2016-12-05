@@ -42,6 +42,8 @@ public class SudokuSolverG {
 	public static void solve(SudokuBoard b) {
 		if (explore(b, 1, 1)) {
 			b.setComplete(true);
+			System.out.println("Board Complete");
+			b.print();
 		} else {
 			System.exit(0);
 		}

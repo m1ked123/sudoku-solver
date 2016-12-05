@@ -53,7 +53,7 @@ public class BoardFrame extends SudokuBoard implements ChangeListener {
 		labels = new JLabel[9][9];
 		speedSlider = new JSlider(0, delay, delay);
 		speedSlider.setPaintTicks(true);
-		speedSlider.setMajorTickSpacing(10);
+		speedSlider.setMajorTickSpacing(delay / 10);
 		speedSlider.setPaintLabels(true);
 		speedSlider.setSnapToTicks(true);
 		speedSlider.addChangeListener(this);
@@ -71,6 +71,7 @@ public class BoardFrame extends SudokuBoard implements ChangeListener {
 					labels[i][j].setText("-");
 				} else {
 					labels[i][j].setText("" + n);
+					labels[i][j].setForeground(Color.BLUE);
 				}
 				contentPanel.add(labels[i][j]);
 			}
@@ -109,10 +110,12 @@ public class BoardFrame extends SudokuBoard implements ChangeListener {
 	
 	@Override
 	public void remove(int col, int row) {
+		labels[row - 1][col - 1].setForeground(Color.RED);
 		labels[row - 1][col - 1].setText("X");
 		pause();
 		super.remove(col, row);
 		labels[row - 1][col - 1].setText("-");
+		labels[row - 1][col - 1].setForeground(Color.BLACK);
 		pause();
 	}
 	
