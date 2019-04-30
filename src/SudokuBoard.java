@@ -233,7 +233,7 @@ public class SudokuBoard implements Runnable {
 
 	@Override
 	public void run() {
-		SudokuSolver.solve(this);
+		solve();
 	}
 	
 	/*
@@ -291,5 +291,54 @@ public class SudokuBoard implements Runnable {
 			}
 		}
 		return true;
+	}
+	
+	// attempts to solve the given sudoku board. if there is a solution
+	// it prints the original puzzle along with that solution. otherwise
+	// it prints that no solution was found for the given puzzle.
+	public void solve() {
+		if (explore(1, 1)) {
+			this.setComplete(true);
+			System.out.println("Board Complete");
+			this.print();
+		} else {
+			System.exit(0);
+		}
+	}
+	
+	// returns whether there is a solution to the current board or not
+	// uncomment the print statements in order to print debug info.
+	public boolean explore(int r, int c) { 
+		if (r > board.length) { 		
+			return true;			
+		} else {
+			while (c <= 9 && this.get(r, c) != SudokuBoard.UNASSIGNED) {
+				if (c == 9 && this.get(r, c) != SudokuBoard.UNASSIGNED) {
+					if (r + 1 > 9) {
+						return true;
+					}
+					r += 1;
+					c = 1;
+				} else {
+					c++;
+				}
+			}
+			for (int n = 1; n <= 9; n++) {
+				if (this.canPlace(c,  r, n)) {
+					this.place(c, r, n);
+					if (c < 9) {
+						if (explore(r, c + 1)) {
+							return true;
+						} 
+					} else {
+						if (explore(r + 1, 1)) {
+							return true;
+						}
+					}
+					this.remove(c, r);
+				}
+			}
+			return false;
+		}
 	}
 }
