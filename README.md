@@ -23,6 +23,3 @@ of a standard Sudoku board. Below is an example of one of these files...
 
 Cells in the board that are supposed to be empty should be represented
 by a 0. Cells with values should have those values listed.
-
-## Improvements
-There is no version that allows the user to directly enter data for a Sudoku board on a cell by cell basis.
