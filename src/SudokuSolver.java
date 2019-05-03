@@ -23,7 +23,8 @@ public class SudokuSolver {
 	 * thread will be null if the file path provided is empty
 	 * @throws FileNotFoundException if the file defined by this 
 	 */
-	public static Thread getSolver(String boardFilePath) throws FileNotFoundException {
+	public static Thread getSolver(String boardFilePath) 
+			throws FileNotFoundException {
 		Thread solver = null;
 		if (boardFilePath != null && boardFilePath.length() > 0) {
 			solver = new Thread(constructBoard(boardFilePath));
@@ -32,55 +33,40 @@ public class SudokuSolver {
 		return solver;
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
-		giveIntro();
-		Thread[] solvers = null;
-		if (args.length > 0) {
-			solvers = new Thread[args.length];
-			for (int i = 0; i < args.length; i++) {
-				solvers[i] = new Thread(constructBoard(args[i]));
-				solvers[i].start();
+	/**
+	 * Gets a collection of threads that will solve the Sudoku boards
+	 * defined by the given list of file paths. The threads will
+	 * be ready to start when they are returned. If the list of paths
+	 * is empty or null, the returned collection will be null.
+	 * @param boardFilePaths a list of paths to sudoku board 
+	 * representations
+	 * @return a collection of threads if the list of paths is neither
+	 * empty nor null. Will return null otherwise
+	 * @throws FileNotFoundException if any of the file paths provided
+	 * cannot be found on disk
+	 */
+	public static Thread[] getSolvers(String[] boardFilePaths) 
+			throws FileNotFoundException {
+		int numPaths = boardFilePaths.length;
+		if (boardFilePaths != null && numPaths > 0) {
+			Thread[] solvers = null;
+			solvers = new Thread[numPaths];
+			for (int i = 0; i < numPaths; i++) {
+				solvers[i] = new Thread(constructBoard(boardFilePaths[i]));
 			}
-			System.out.println();
-			for (int i = 0; i < solvers.length; i++) {
-				try {
-					solvers[i].join();
-				} catch (InterruptedException e) {
-					return;
-				}
-			}
+			return solvers;
 		} else {
-			Scanner console = new Scanner(System.in);
-			Queue<String> fileNames = new LinkedList<String>();
-			System.out.print("file name (return to exit): ");
-			String fileName = console.nextLine();
-			while (fileName.length() > 0) {
-				fileNames.add(fileName);
-				System.out.println(fileNames);
-				System.out.print("file name (return to exit):");
-				fileName = console.nextLine();
-			}
-			if (fileNames.size() > 0) {
-				System.out.println("...solving puzzles...");
-				solvers = new Thread[fileNames.size()];
-				int i = 0;
-				String str = fileNames.remove();
-				if (str != "") {
-					solvers[i] = new Thread(constructBoard(str));
-					solvers[i].start();
-					i++;
-				}
-				System.out.println();
-				joinThreads(solvers);
-			} else {
-				System.out.println("no files entered.");
-				System.exit(0);
-			}
-			console.close();
+			return null;
 		}
+		
 	}
 	
-	private static void joinThreads(Thread[] solvers) {
+	/**
+	 * Joins all the solver threads in the provided list and waits for
+	 * them to complete/die
+	 * @param solvers
+	 */
+	public static void joinThreads(Thread[] solvers) {
 		for (int i = 0; i < solvers.length; i++) {
 			try {
 				solvers[i].join();
