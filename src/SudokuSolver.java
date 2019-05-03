@@ -11,6 +11,27 @@ import java.util.Scanner;
 // program is a thread safe implementation and allows for solving
 // multiple boards at once.
 public class SudokuSolver {
+	
+	/**
+	 * Gets a thread that will solve the Sudoku board defined by the
+	 * text file at the given string file path. The thread will be
+	 * ready to be started by the client. The thred will be null if
+	 * the provided path is empty.
+	 * @param boardFilePath the path to the file holding the String representation 
+	 * of a sudoku board to solve.
+	 * @return a Thread with a SudokuBoard that will be solved. The
+	 * thread will be null if the file path provided is empty
+	 * @throws FileNotFoundException if the file defined by this 
+	 */
+	public static Thread getSolver(String boardFilePath) throws FileNotFoundException {
+		Thread solver = null;
+		if (boardFilePath != null && boardFilePath.length() > 0) {
+			solver = new Thread(constructBoard(boardFilePath));
+			System.out.println();
+		}
+		return solver;
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException {
 		giveIntro();
 		Thread[] solvers = null;
