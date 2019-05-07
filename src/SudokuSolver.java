@@ -1,7 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
 
 // Program SudokuSolver uses recursive backtracking to solve a
@@ -11,6 +9,7 @@ import java.util.Scanner;
 // program is a thread safe implementation and allows for solving
 // multiple boards at once.
 public class SudokuSolver {
+	public static boolean isGraphical = false;
 	
 	/**
 	 * Gets a thread that will solve the Sudoku board defined by the
@@ -27,7 +26,11 @@ public class SudokuSolver {
 			throws FileNotFoundException {
 		Thread solver = null;
 		if (boardFilePath != null && boardFilePath.length() > 0) {
-			solver = new Thread(constructBoard(boardFilePath));
+			if (isGraphical) {
+				solver = new Thread(constructGraphicalBoard(boardFilePath));
+			} else {
+				solver = new Thread(constructBoard(boardFilePath));
+			}
 			System.out.println();
 		}
 		return solver;
@@ -52,7 +55,12 @@ public class SudokuSolver {
 			Thread[] solvers = null;
 			solvers = new Thread[numPaths];
 			for (int i = 0; i < numPaths; i++) {
-				solvers[i] = new Thread(constructBoard(boardFilePaths[i]));
+				String boardFilePath = boardFilePaths[i];
+				if (isGraphical) {
+					solvers[i] = new Thread(constructGraphicalBoard(boardFilePath));
+				} else {
+					solvers[i] = new Thread(constructBoard(boardFilePath));
+				}
 			}
 			return solvers;
 		} else {
@@ -77,9 +85,40 @@ public class SudokuSolver {
 		return true;
 	}
 	
-	// constructs and returns the board that is to be solved from the given file name.
-	// If the given file is not valid or not found, will throw a FileNotFoundException
-	public static SudokuBoard constructBoard(String fileName) throws FileNotFoundException {
+	/**
+	 * Constructs and returns the board that is to be solved from the
+	 * given file name. If the given file is not valid or not found,
+	 * will throw a FileNotFoundException. This is the graphical version
+	 * and will create a graphical version of the board provided.
+	 * @param fileName the path to the file to make a board from
+	 * @return a Sudoku board that's ready to be solved
+	 * @throws FileNotFoundException if the file path cannot be found
+	 * on disk
+	 */
+	public static BoardFrame constructGraphicalBoard(String fileName) 
+			throws FileNotFoundException {
+		if (fileName.lastIndexOf('.') < 0) {
+			// means the file name was not entered properly, attempt
+			// to insert file extension
+			System.out.println("missing file extension, inserting...");
+			fileName += ".txt";
+		}
+		Scanner input = new Scanner(new File(fileName));
+		BoardFrame b = new BoardFrame(input, fileName);
+		return b;
+	}
+	
+	/**
+	 * Constructs and returns the board that is to be solved from the
+	 * given file name. If the given file is not valid or not found,
+	 * will throw a FileNotFoundException
+	 * @param fileName the path to the file to make a board from
+	 * @return a Sudoku board that's ready to be solved
+	 * @throws FileNotFoundException if the file path cannot be found
+	 * on disk
+	 */
+	public static SudokuBoard constructBoard(String fileName) 
+			throws FileNotFoundException {
 		if (fileName.lastIndexOf('.') < 0) {
 			// means the file name was not entered properly, attempt
 			// to insert file extension
