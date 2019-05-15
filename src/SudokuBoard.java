@@ -67,6 +67,7 @@ public class SudokuBoard implements Runnable {
 			}
 			line++;
 		}
+		input.close();
 		lineParser.close();
 	}
 	
