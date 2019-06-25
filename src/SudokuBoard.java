@@ -71,6 +71,11 @@ public class SudokuBoard implements Runnable {
 		lineParser.close();
 	}
 	
+	/**
+	 * Creates a new <code>SudokuBoard</code> with the given array of
+	 * integers.
+	 * @param board the board to create
+	 */
 	public SudokuBoard(int[][] board) {
 		this.board = board;
 	}
@@ -107,7 +112,7 @@ public class SudokuBoard implements Runnable {
 	 * Returns whether it is valid to put the given number at the given
 	 * location on the board. A location is considered valid if it does
 	 * not already occur in the same row, column, and 3 by 3 sub-square
-	 * in the board. This method will throw and exception if the number
+	 * in the board. This method will throw an exception if the number
 	 * being explored is greater than 9 or less than 0. It will also
 	 * throw an exception if the row or column being explored is greater
 	 * than 9 or less than or equal to 0.
@@ -293,10 +298,12 @@ public class SudokuBoard implements Runnable {
 		}
 		return true;
 	}
-	
-	// attempts to solve the given sudoku board. if there is a solution
-	// it prints the original puzzle along with that solution. otherwise
-	// it prints that no solution was found for the given puzzle.
+
+	/**
+	 * Attempts to solve this <code>SudokuBoard</code>. If there is a
+	 * solution, the solution will be printed. Otherwise, it prints
+	 * that no solution was found.
+	 */
 	public void solve() {
 		if (explore(1, 1)) {
 			this.setComplete(true);
@@ -307,12 +314,18 @@ public class SudokuBoard implements Runnable {
 		}
 	}
 	
-	// returns whether there is a solution to the current board or not
-	// uncomment the print statements in order to print debug info.
+	/**
+	 * Returns whether there is a solution to this board.
+	 * @param r the row currently being explored
+	 * @param c the column currently being explored
+	 * @return true if a solution has been found; otherwise false.
+	 */
 	public boolean explore(int r, int c) { 
 		if (r > board.length) { 		
 			return true;			
 		} else {
+			// move us forward until we get to a space we can actually
+			// work on
 			while (c <= 9 && this.get(r, c) != SudokuBoard.UNASSIGNED) {
 				if (c == 9 && this.get(r, c) != SudokuBoard.UNASSIGNED) {
 					if (r + 1 > 9) {

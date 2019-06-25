@@ -18,30 +18,34 @@ import javax.swing.event.ChangeListener;
 
 /**
  * Class <code>BoardFrame</code> represents a graphical instance of the
- * <code>SudokuBoard</code> class. It contains a 9 by 9 grid of buttons
- * that display the contents of the board. As the computer solves the
- * puzzle, the contents are updated as needed. The time it takes for the
- * computer to show that it has solved the Sudoku puzzle when using this
- * class is usually much longer than it would using the console implementation
- * of the program. The reason for this is that there is a 50ms pause 
- * between each program tick.
+ * <code>SudokuBoard</code> class. It contains a 9 by 9 grid of buttons that
+ * display the contents of the board. As the computer solves the puzzle, the
+ * contents are updated as needed. The time it takes for the computer to show
+ * that it has solved the Sudoku puzzle when using this class is usually much
+ * longer than it would using the console implementation of the program. The
+ * reason for this is that there is a 50ms pause between each program tick.
+ * 
  * @author Michael Davis
  *
  */
 public class BoardFrame extends SudokuBoard implements ChangeListener {
 	private static int windowCount;
-	private JPanel contentPanel, toolsPanel, mainPanel; // the content panel for this class
+	private JPanel contentPanel, toolsPanel, mainPanel; // the content panel for
+														// this class
 	private JFrame frame; // the main window
 	private JLabel[][] labels; // the buttons that make up the board
 	private JSlider speedSlider; // the slider to adjust the speed
 	private int delay = 100; // the delay for the timer
-	
+
 	/**
-	 * Constructs a new BoardFrame object with the given input stream
-	 * as its source. Each new board is 500 * 500 pixels and will default
-	 * position itself in the upper left-hand corner of the screen.
-	 * @param input the input data stream that has already been hooked up
-	 * @param fileName the name of the file linked to the input stream
+	 * Constructs a new BoardFrame object with the given input stream as its
+	 * source. Each new board is 500 * 500 pixels and will default position
+	 * itself in the upper left-hand corner of the screen.
+	 * 
+	 * @param input
+	 *            the input data stream that has already been hooked up
+	 * @param fileName
+	 *            the name of the file linked to the input stream
 	 */
 	public BoardFrame(Scanner input, String fileName) {
 		super(input);
@@ -98,7 +102,7 @@ public class BoardFrame extends SudokuBoard implements ChangeListener {
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
 	// pauses the simulation by the delay time
 	private void pause() {
 		try {
@@ -107,7 +111,7 @@ public class BoardFrame extends SudokuBoard implements ChangeListener {
 			return;
 		}
 	}
-	
+
 	@Override
 	public void remove(int col, int row) {
 		labels[row - 1][col - 1].setForeground(Color.RED);
@@ -118,30 +122,25 @@ public class BoardFrame extends SudokuBoard implements ChangeListener {
 		labels[row - 1][col - 1].setForeground(Color.BLACK);
 		pause();
 	}
-	
+
 	@Override
 	public void place(int col, int row, int n) {
 		labels[row - 1][col - 1].setText("" + n);
 		super.place(col, row, n);
 		pause();
 	}
-	
+
 	@Override
 	public boolean canPlace(int col, int row, int n) {
-		labels[row-1][col-1].setText("...");
+		labels[row - 1][col - 1].setText("...");
 		pause();
-		labels[row-1][col-1].setText("-");
-		return super.canPlace(col, row, n);		
-	}
-	
-	@Override
-	public void run() {
-		solve();
+		labels[row - 1][col - 1].setText("-");
+		return super.canPlace(col, row, n);
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		JSlider slider = (JSlider)e.getSource();
+		JSlider slider = (JSlider) e.getSource();
 		if (!slider.getValueIsAdjusting()) {
 			if (slider.getValue() == 0) {
 				this.delay = 1;
@@ -150,53 +149,4 @@ public class BoardFrame extends SudokuBoard implements ChangeListener {
 			}
 		}
 	}
-	
-	// attempts to solve the given sudoku board. if there is a solution
-		// it prints the original puzzle along with that solution. otherwise
-		// it prints that no solution was found for the given puzzle.
-		public void solve() {
-			if (explore(1, 1)) {
-				this.setComplete(true);
-				System.out.println("Board Complete");
-				this.print();
-			} else {
-				System.exit(0);
-			}
-		}
-		
-		// returns whether there is a solution to the current board or not
-		// uncomment the print statements in order to print debug info.
-		public boolean explore(int r, int c) { 
-			if (r > this.size()) { 		
-				return true;			
-			} else {
-				while (c <= 9 && this.get(r, c) != SudokuBoard.UNASSIGNED) {
-					if (c == 9 && this.get(r, c) != SudokuBoard.UNASSIGNED) {
-						if (r + 1 > 9) {
-							return true;
-						}
-						r += 1;
-						c = 1;
-					} else {
-						c++;
-					}
-				}
-				for (int n = 1; n <= 9; n++) {
-					if (this.canPlace(c,  r, n)) {
-						this.place(c, r, n);
-						if (c < 9) {
-							if (explore(r, c + 1)) {
-								return true;
-							} 
-						} else {
-							if (explore(r + 1, 1)) {
-								return true;
-							}
-						}
-						this.remove(c, r);
-					}
-				}
-				return false;
-			}
-		}
 }

@@ -13,6 +13,10 @@ public class MainProgram {
 		String input = console.nextLine();
 		SudokuSolver.isGraphical = input.toUpperCase().equals("Y");
 		
+		if (SudokuSolver.isGraphical) {
+			System.out.println("Using the graphical version of the program.");
+		}
+		
 		Thread[] solvers = null;
 		if (args.length > 0) {
 			solvers = SudokuSolver.getSolvers(args);
@@ -48,7 +52,7 @@ public class MainProgram {
 		SudokuSolver.joinThreads(solvers);
 	}
 	
-	// introduces the user to the program.
+	// Introduces the user to the program.
 	public static void giveIntro() {
 		System.out.println("This program takes a text representation of a Sudoku board");
 		System.out.println("and prints out its solution. This program can also show a");
